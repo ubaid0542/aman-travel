@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <defs>
+    <linearGradient id="skyGradApple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#041f3d" />
+      <stop offset="100%" stop-color="#083a66" />
+    </linearGradient>
+    <linearGradient id="sunGradApple" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffe27a" />
+      <stop offset="100%" stop-color="#f5b324" />
+    </linearGradient>
+    <linearGradient id="goldBorderApple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd45a" />
+      <stop offset="100%" stop-color="#d49a15" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="180" height="180" rx="42" fill="url(#skyGradApple)" />
+  <rect x="4" y="4" width="172" height="172" rx="38" fill="none" stroke="url(#goldBorderApple)" stroke-width="4" opacity="0.8" />
+
+  <!-- Golden Sunrise -->
+  <circle cx="90" cy="72" r="32" fill="url(#sunGradApple)" />
+
+  <!-- Mountain Left/Back -->
+  <polygon points="18,152 64,74 110,152" fill="#0c3559" />
+  <polygon points="64,74 78,100 64,94 50,100" fill="#ffffff" opacity="0.95" />
+
+  <!-- Mountain Right/Back -->
+  <polygon points="74,152 124,78 164,152" fill="#0d3c63" />
+  <polygon points="124,78 138,104 124,98 110,104" fill="#ffffff" opacity="0.95" />
+
+  <!-- Central Tall Himalayan Snow Peak -->
+  <polygon points="34,152 90,44 146,152" fill="#144d7a" />
+  <polygon points="90,44 112,86 90,78 68,86" fill="#ffffff" />
+  <polygon points="90,44 90,78 68,86" fill="#e1effa" />
+  
+  <!-- Base Ground -->
+  <path d="M10,150 Q90,140 170,150 L170,165 Q90,165 10,165 Z" fill="#04182b" />
+  
+  <!-- Golden Polaris Star -->
+  <path d="M136,32 L140,42 L150,46 L140,50 L136,60 L132,50 L122,46 L132,42 Z" fill="#ffd45a" />
+</svg>

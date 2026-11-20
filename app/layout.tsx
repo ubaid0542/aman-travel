@@ -16,6 +16,15 @@ export const metadata: Metadata = {
     "Atal Tunnel Sissu",
   ],
   authors: [{ name: "Aman Traveller" }],
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-icon.svg", type: "image/svg+xml" },
+    ],
+  },
   alternates: {
     canonical: "/",
   },
