@@ -133,10 +133,14 @@ export function DestinationGallery({ onBookSpot }: DestinationGalleryProps) {
     lightboxIndex !== null ? filteredSpots[lightboxIndex] : null;
 
   return (
-    <section id="gallery" className="relative overflow-hidden py-16">
+    <section
+      id="gallery"
+      className="relative overflow-hidden py-14 sm:py-16 w-full max-w-full"
+      style={{ contain: "paint" }}
+    >
       {/* Background ambient mountain glow */}
       <div
-        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[500px] w-[90vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[400px] w-[90vw] max-w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-3xl overflow-hidden"
         style={{
           background:
             "radial-gradient(circle, rgba(255,212,90,0.3) 0%, rgba(6,40,71,0.4) 60%, transparent 100%)",
@@ -222,14 +226,16 @@ export function DestinationGallery({ onBookSpot }: DestinationGalleryProps) {
             onMouseEnter={() => setIsAutoPlay(false)}
             onMouseLeave={() => setIsAutoPlay(true)}
           >
-            {/* 3D Perspective Stage Container */}
+            {/* 3D Perspective Stage Container with Strict Overflow Clip */}
             <div
-              className="relative flex h-[390px] w-full max-w-[1040px] items-center justify-center overflow-hidden sm:h-[480px]"
+              className="relative flex h-[380px] w-full max-w-[1040px] items-center justify-center overflow-hidden sm:h-[480px]"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
               style={{
                 perspective: "1200px",
+                overflow: "clip",
+                contain: "paint",
               }}
             >
               {filteredSpots.map((spot, idx) => {
@@ -242,11 +248,11 @@ export function DestinationGallery({ onBookSpot }: DestinationGalleryProps) {
                 const isCenter = offset === 0;
                 const isLeft = offset === -1;
                 const isRight = offset === 1;
-                const isVisible = Math.abs(offset) <= 2;
+                const isVisible = Math.abs(offset) <= 1;
 
                 if (!isVisible) return null;
 
-                // Responsive translation and 3D depth styles
+                // Responsive translation and 3D depth styles (contained strictly on mobile)
                 let translateX = 0;
                 let scale = 1;
                 let opacity = 0;
@@ -260,27 +266,17 @@ export function DestinationGallery({ onBookSpot }: DestinationGalleryProps) {
                   zIndex = 30;
                   rotateY = 0;
                 } else if (isLeft) {
-                  translateX = -68; // Percent of card width
-                  scale = 0.84;
+                  translateX = -55; // Percent of card width, keeps inside screen on mobile
+                  scale = 0.85;
                   opacity = 0.55;
                   zIndex = 20;
-                  rotateY = 12; // Slight 3D cinematic inward tilt
+                  rotateY = 8;
                 } else if (isRight) {
-                  translateX = 68;
-                  scale = 0.84;
+                  translateX = 55;
+                  scale = 0.85;
                   opacity = 0.55;
                   zIndex = 20;
-                  rotateY = -12;
-                } else if (offset === -2) {
-                  translateX = -120;
-                  scale = 0.68;
-                  opacity = 0;
-                  zIndex = 10;
-                } else if (offset === 2) {
-                  translateX = 120;
-                  scale = 0.68;
-                  opacity = 0;
-                  zIndex = 10;
+                  rotateY = -8;
                 }
 
                 return (
@@ -296,7 +292,7 @@ export function DestinationGallery({ onBookSpot }: DestinationGalleryProps) {
                     role="button"
                     tabIndex={0}
                     aria-label={`View ${spot.title}`}
-                    className={`absolute top-0 h-[370px] w-[82%] max-w-[580px] cursor-pointer select-none overflow-hidden rounded-[22px] transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-transform sm:h-[450px] sm:w-[72%] ${
+                    className={`absolute top-0 h-[360px] w-[86%] max-w-[540px] cursor-pointer select-none overflow-hidden rounded-[20px] transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-transform sm:h-[450px] sm:w-[72%] ${
                       isCenter
                         ? "shadow-[0_24px_60px_rgba(4,31,61,0.45)] ring-2 ring-[#ffd45a]/70"
                         : "shadow-[0_12px_30px_rgba(4,31,61,0.2)] hover:opacity-80"

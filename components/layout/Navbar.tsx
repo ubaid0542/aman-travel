@@ -25,11 +25,11 @@ export function Navbar({
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#062847] text-white shadow-[0_4px_14px_rgba(6,40,71,0.2)]">
-      <div className="mx-auto flex max-w-[1260px] items-center justify-between gap-3 px-[5%] py-4">
+    <header className="sticky top-0 z-50 bg-[#062847] text-white shadow-[0_4px_14px_rgba(6,40,71,0.2)] w-full overflow-hidden">
+      <div className="mx-auto flex max-w-[1260px] items-center justify-between gap-2 px-3 py-3 sm:px-[5%] sm:py-4">
         <a
           href="#"
-          className="shrink-0 text-2xl font-black tracking-wider text-white no-underline"
+          className="shrink-0 text-lg sm:text-2xl font-black tracking-wider text-white no-underline"
         >
           AMAN <span className="text-[#ffd45a]">TRAVELLER</span>
         </a>
@@ -84,15 +84,15 @@ export function Navbar({
         </nav>
 
         {/* Mobile Actions */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden shrink-0">
           <button
             type="button"
             onClick={onOpenLeadsDrawer}
-            className="flex cursor-pointer items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-2.5 py-1.5 text-xs font-bold text-[#e2eef7]"
+            className="flex cursor-pointer items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2 py-1 text-xs font-bold text-[#e2eef7]"
             aria-label="Open Saved Leads"
           >
             <span className="hidden sm:inline">Leads</span>
-            <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#ffd45a] px-1.5 text-[11px] font-black text-[#102c41]">
+            <span className="inline-flex h-4 min-w-[18px] items-center justify-center rounded-full bg-[#ffd45a] px-1 text-[10px] font-black text-[#102c41]">
               {leadsCount}
             </span>
           </button>
@@ -106,15 +106,15 @@ export function Navbar({
                 guests: 2,
               })
             }
-            className="btn-gold !px-4 !py-2 text-sm"
+            className="btn-gold !px-2.5 !py-1 !text-xs font-bold sm:!px-4 sm:!py-2 sm:!text-sm"
           >
-            Book Now
+            Book
           </button>
 
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="rounded-lg border border-white/25 p-2 text-white hover:bg-white/10"
+            className="rounded-lg border border-white/25 p-1.5 sm:p-2 text-white hover:bg-white/10"
             aria-label="Toggle Menu"
           >
             <svg

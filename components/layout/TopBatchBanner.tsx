@@ -29,11 +29,11 @@ export function TopBatchBanner({
   return (
     <aside
       aria-label="Upcoming 3-Day Departure Announcement"
-      className="relative z-50 border-b border-[#ffd45a]/30 bg-gradient-to-r from-[#031527] via-[#062847] to-[#0b3b66] px-4 py-2.5 text-white shadow-md"
+      className="relative z-50 border-b border-[#ffd45a]/30 bg-gradient-to-r from-[#031527] via-[#062847] to-[#0b3b66] px-3 py-2 text-white shadow-md w-full overflow-hidden"
     >
-      <div className="mx-auto flex max-w-[1260px] flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+      <div className="mx-auto flex max-w-[1260px] flex-wrap items-center justify-between gap-2.5 text-xs sm:text-sm">
         {/* Left Side: Pulse badge & Batch Dates */}
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
           <span className="flex items-center gap-1.5 rounded-full bg-[#ef4444] px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider text-white shadow-xs">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75"></span>
@@ -43,7 +43,7 @@ export function TopBatchBanner({
           </span>
 
           <div className="flex flex-wrap items-center gap-1.5 font-bold">
-            <span className="text-[#ffd45a]">
+            <span className="text-[#ffd45a] text-xs sm:text-sm">
               🗓️ {formatDateWithDay(activeBatch.startDate)} → {formatDateWithDay(activeBatch.endDate)}
             </span>
             <span className="rounded-md bg-white/15 px-2 py-0.5 text-[11px] font-extrabold text-white">
@@ -66,10 +66,10 @@ export function TopBatchBanner({
           <button
             type="button"
             onClick={handleBookBatch}
-            className="flex cursor-pointer items-center gap-1.5 rounded-full bg-[#ffd45a] px-3.5 py-1 text-xs font-black text-[#041f3d] transition-all hover:bg-white hover:shadow-md"
+            className="flex cursor-pointer items-center gap-1.5 rounded-full bg-[#ffd45a] px-3 py-1 text-xs font-black text-[#041f3d] transition-all hover:bg-white hover:shadow-md"
           >
             <span>Book This Batch</span>
-            <span className="text-[11px] font-normal opacity-90 sm:inline">(₹6k Solo / ₹11k Couple)</span>
+            <span className="hidden sm:inline text-[11px] font-normal opacity-90">(₹6k Solo / ₹11k Couple)</span>
             <span>→</span>
           </button>
 
