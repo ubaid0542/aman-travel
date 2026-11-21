@@ -20,6 +20,7 @@ export function DestinationGallery({ onBookSpot }: DestinationGalleryProps) {
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchEndX, setTouchEndX] = useState<number | null>(null);
   const thumbnailStripRef = useRef<HTMLDivElement>(null);
+  const isFirstMount = useRef(true);
 
   const categories = [
     "All",
@@ -85,8 +86,12 @@ export function DestinationGallery({ onBookSpot }: DestinationGalleryProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [lightboxIndex, viewMode, filteredSpots.length, handleNext, handlePrev]);
 
-  // Scroll active thumbnail horizontally inside the filmstrip ONLY (never scrolls the main window)
+  // Scroll active thumbnail horizontally inside the filmstrip ONLY when user changes slides (never on initial load, never scrolls window)
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
     const strip = thumbnailStripRef.current;
     if (!strip) return;
     const activeThumb = strip.children[currentIndex] as HTMLElement | undefined;
@@ -97,10 +102,7 @@ export function DestinationGallery({ onBookSpot }: DestinationGalleryProps) {
     const thumbWidth = activeThumb.clientWidth;
     const targetScrollLeft = thumbLeft - stripWidth / 2 + thumbWidth / 2;
 
-    strip.scrollTo({
-      left: Math.max(0, targetScrollLeft),
-      behavior: "smooth",
-    });
+    strip.scrollLeft = Math.max(0, targetScrollLeft);
   }, [currentIndex]);
 
   // Touch Swipe Handlers for Mobile

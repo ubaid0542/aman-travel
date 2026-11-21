@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BookingContext } from "@/types";
 import { useLeads } from "@/hooks/useLeads";
 import { useTripBatch } from "@/hooks/useTripBatch";
@@ -42,6 +42,13 @@ export default function HomePage() {
     setAdminDrawerTab(tab);
     setLeadsDrawerOpen(true);
   };
+
+  // Ensure page always starts at top on initial load
+  useEffect(() => {
+    if (typeof window !== "undefined" && !window.location.hash) {
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#f4f9fc] font-sans text-[#173246] antialiased">

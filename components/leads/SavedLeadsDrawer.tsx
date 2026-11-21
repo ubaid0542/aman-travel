@@ -646,7 +646,6 @@ export function SavedLeadsDrawer({
                       setPasswordInput(e.target.value);
                       setAuthError(null);
                     }}
-                    autoFocus
                     className="w-full rounded-xl border border-[#c3d8e6] bg-white px-3 py-2.5 pr-16 text-sm text-[#173246] focus:border-[#062847] focus:outline-none disabled:bg-gray-100 disabled:opacity-75"
                   />
                   <button
