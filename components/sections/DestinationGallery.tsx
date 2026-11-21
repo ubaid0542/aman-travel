@@ -85,20 +85,22 @@ export function DestinationGallery({ onBookSpot }: DestinationGalleryProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [lightboxIndex, viewMode, filteredSpots.length, handleNext, handlePrev]);
 
-  // Scroll active thumbnail into view
+  // Scroll active thumbnail horizontally inside the filmstrip ONLY (never scrolls the main window)
   useEffect(() => {
-    if (thumbnailStripRef.current) {
-      const activeThumb = thumbnailStripRef.current.children[
-        currentIndex
-      ] as HTMLElement;
-      if (activeThumb) {
-        activeThumb.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center",
-        });
-      }
-    }
+    const strip = thumbnailStripRef.current;
+    if (!strip) return;
+    const activeThumb = strip.children[currentIndex] as HTMLElement | undefined;
+    if (!activeThumb) return;
+
+    const stripWidth = strip.clientWidth;
+    const thumbLeft = activeThumb.offsetLeft;
+    const thumbWidth = activeThumb.clientWidth;
+    const targetScrollLeft = thumbLeft - stripWidth / 2 + thumbWidth / 2;
+
+    strip.scrollTo({
+      left: Math.max(0, targetScrollLeft),
+      behavior: "smooth",
+    });
   }, [currentIndex]);
 
   // Touch Swipe Handlers for Mobile
