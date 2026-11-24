@@ -2,7 +2,6 @@ import {
   STORAGE_KEY,
   BATCH_STORAGE_KEY,
   ADMIN_LEADS_PASSWORD,
-  ADMIN_PASSWORD_STORAGE_KEY,
   ADMIN_SESSION_STORAGE_KEY,
 } from "@/data/constants";
 import { LeadRecord, ActiveTripBatch } from "@/types";
@@ -70,31 +69,17 @@ export function saveActiveTripBatch(batch: ActiveTripBatch): void {
 }
 
 /**
- * Loads current admin password (customized by admin or default).
+ * Loads current admin password (standard fixed master password).
  */
 export function getStoredAdminPassword(): string {
-  if (typeof window === "undefined") return ADMIN_LEADS_PASSWORD;
-  try {
-    const custom = window.localStorage.getItem(ADMIN_PASSWORD_STORAGE_KEY);
-    if (custom && custom.trim()) {
-      return custom.trim();
-    }
-  } catch {
-    // Ignore storage error
-  }
   return ADMIN_LEADS_PASSWORD;
 }
 
 /**
- * Saves a new custom admin password.
+ * Saves a new custom admin password (deprecated - master password fixed).
  */
-export function saveStoredAdminPassword(password: string): void {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(ADMIN_PASSWORD_STORAGE_KEY, password.trim());
-  } catch {
-    // Ignore storage error
-  }
+export function saveStoredAdminPassword(_password: string): void {
+  // Deprecated: Password changes disabled per site policy
 }
 
 /**

@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { LeadRecord, ActiveTripBatch } from "@/types";
 import {
   getStoredAdminPassword,
-  saveStoredAdminPassword,
   isAdminSessionActive,
   setAdminSessionActive,
 } from "@/lib/storage";
@@ -51,14 +50,6 @@ export function SavedLeadsDrawer({
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [lockoutSeconds, setLockoutSeconds] = useState(0);
-
-  // Change Password State
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [currentPassInput, setCurrentPassInput] = useState("");
-  const [newPassInput, setNewPassInput] = useState("");
-  const [confirmPassInput, setConfirmPassInput] = useState("");
-  const [passChangeError, setPassChangeError] = useState<string | null>(null);
-  const [passChangeSuccess, setPassChangeSuccess] = useState<string | null>(null);
 
   // Top Section Navigation Tab: "leads" or "schedule"
   const [activeTab, setActiveTab] = useState<"leads" | "schedule">(initialTab);
@@ -140,9 +131,6 @@ export function SavedLeadsDrawer({
       setAuthError(null);
       setBatchSavedMessage(false);
       setBatchDateError(null);
-      setIsChangingPassword(false);
-      setPassChangeError(null);
-      setPassChangeSuccess(null);
     }
   }, [isOpen]);
 
@@ -239,41 +227,7 @@ export function SavedLeadsDrawer({
     setPasswordInput("");
     setEditingLeadId(null);
     setAuthError(null);
-    setIsChangingPassword(false);
     setBatchSavedMessage(false);
-  };
-
-  // Handle Password Change Submit
-  const handleChangePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const storedPass = getStoredAdminPassword();
-
-    if (currentPassInput.trim() !== storedPass) {
-      setPassChangeError("Current password galat hai.");
-      return;
-    }
-
-    if (newPassInput.trim().length < 4) {
-      setPassChangeError("Naya password kam se kam 4 characters ka hona chahiye.");
-      return;
-    }
-
-    if (newPassInput.trim() !== confirmPassInput.trim()) {
-      setPassChangeError("New password aur confirm password match nahi ho rahe.");
-      return;
-    }
-
-    saveStoredAdminPassword(newPassInput.trim());
-    setPassChangeError(null);
-    setPassChangeSuccess("Admin Password successfully update ho gaya!");
-    setCurrentPassInput("");
-    setNewPassInput("");
-    setConfirmPassInput("");
-
-    setTimeout(() => {
-      setPassChangeSuccess(null);
-      setIsChangingPassword(false);
-    }, 2500);
   };
 
   // Handle Custom Starting Date Change
@@ -457,136 +411,75 @@ export function SavedLeadsDrawer({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drawer Header */}
-        <div className="flex items-center justify-between bg-[#062847] px-6 py-4 text-white">
-          <div>
-            <span className="text-[11px] font-black uppercase tracking-wider text-[#ffd45a]">
-              {isUnlocked ? "Admin Control Panel • Unlocked" : "Password Protected • Admin Control"}
-            </span>
-            <h3 className="text-lg font-extrabold">
-              Aman Traveller Admin Desk
-            </h3>
+        <div className="bg-[#062847] px-4 py-3 sm:px-6 sm:py-4 text-white">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <span className="block truncate text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#ffd45a]">
+                {isUnlocked ? "Admin Control Panel • Unlocked" : "Password Protected • Admin Control"}
+              </span>
+              <h3 className="text-base sm:text-lg font-extrabold text-white leading-tight">
+                Aman Traveller Admin Desk
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              {isUnlocked && (
+                <div className="hidden sm:flex items-center gap-2">
+                  {activeTab === "leads" && (
+                    <button
+                      type="button"
+                      onClick={handleExportCSV}
+                      className="flex cursor-pointer items-center gap-1.5 rounded-full border border-[#ffd45a]/60 bg-white/10 px-3 py-1 text-xs font-bold text-[#ffd45a] hover:bg-white/20"
+                      title="Export all leads to CSV"
+                    >
+                      📥 CSV
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleLockLeads}
+                    className="cursor-pointer rounded-full border border-red-400/40 bg-red-500/20 px-3 py-1 text-xs font-bold text-red-200 hover:bg-red-500/30"
+                  >
+                    Lock
+                  </button>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close Admin Drawer"
+                className="flex h-8 w-8 sm:h-9 sm:w-9 cursor-pointer items-center justify-center rounded-full bg-white/10 text-lg sm:text-xl text-white hover:bg-white/20"
+              >
+                ×
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            {isUnlocked && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setIsChangingPassword((prev) => !prev)}
-                  className="cursor-pointer rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-xs font-bold text-white hover:bg-white/20"
-                  title="Change Admin Password"
-                >
-                  🔑 {isChangingPassword ? "Close Pass" : "Password"}
-                </button>
+
+          {/* Mobile Action Bar when unlocked */}
+          {isUnlocked && (
+            <div className="mt-2.5 flex sm:hidden items-center justify-between border-t border-white/10 pt-2">
+              <div>
                 {activeTab === "leads" && (
                   <button
                     type="button"
                     onClick={handleExportCSV}
-                    className="flex cursor-pointer items-center gap-1.5 rounded-full border border-[#ffd45a]/60 bg-white/10 px-3 py-1 text-xs font-bold text-[#ffd45a] hover:bg-white/20"
+                    className="flex cursor-pointer items-center gap-1 rounded-full border border-[#ffd45a]/60 bg-white/10 px-2.5 py-1 text-xs font-bold text-[#ffd45a] hover:bg-white/20"
                     title="Export all leads to CSV"
                   >
-                    📥 CSV
+                    📥 Export CSV
                   </button>
                 )}
-                <button
-                  type="button"
-                  onClick={handleLockLeads}
-                  className="cursor-pointer rounded-full border border-red-400/40 bg-red-500/20 px-3 py-1 text-xs font-bold text-red-200 hover:bg-red-500/30"
-                >
-                  Lock
-                </button>
-              </>
-            )}
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close Admin Drawer"
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/10 text-xl text-white hover:bg-white/20"
-            >
-              ×
-            </button>
-          </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleLockLeads}
+                className="cursor-pointer rounded-full border border-red-400/40 bg-red-500/20 px-3 py-1 text-xs font-bold text-red-200 hover:bg-red-500/30"
+              >
+                🔒 Lock Desk
+              </button>
+            </div>
+          )}
         </div>
-
-        {/* Change Password Panel if toggled */}
-        {isUnlocked && isChangingPassword && (
-          <div className="border-b border-[#ffd45a]/40 bg-[#073155] p-5 text-white">
-            <h4 className="mb-1 text-sm font-black text-[#ffd45a]">
-              Change Admin Desk Password
-            </h4>
-            <p className="mb-3 text-xs text-[#c5def1]">
-              Apna naya secret password set karein. Next time se yehi password use hoga.
-            </p>
-
-            {passChangeError && (
-              <div className="mb-3 rounded-lg border border-[#fecaca] bg-[#fef2f2] px-3 py-1.5 text-xs font-bold text-[#991b1b]">
-                {passChangeError}
-              </div>
-            )}
-
-            {passChangeSuccess && (
-              <div className="mb-3 rounded-lg border border-[#86efac] bg-[#f0fdf4] px-3 py-1.5 text-xs font-bold text-[#166534]">
-                {passChangeSuccess}
-              </div>
-            )}
-
-            <form onSubmit={handleChangePasswordSubmit} className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-              <div>
-                <label className="mb-1 block text-[11px] font-bold text-[#c5def1]">
-                  Current Password *
-                </label>
-                <input
-                  type="password"
-                  value={currentPassInput}
-                  onChange={(e) => setCurrentPassInput(e.target.value)}
-                  placeholder="Old password"
-                  className="w-full rounded-lg border border-white/20 bg-white/10 px-2.5 py-1.5 text-xs text-white placeholder-white/40 focus:border-[#ffd45a] focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-[11px] font-bold text-[#c5def1]">
-                  New Password *
-                </label>
-                <input
-                  type="password"
-                  value={newPassInput}
-                  onChange={(e) => setNewPassInput(e.target.value)}
-                  placeholder="New password (min 4)"
-                  className="w-full rounded-lg border border-white/20 bg-white/10 px-2.5 py-1.5 text-xs text-white placeholder-white/40 focus:border-[#ffd45a] focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-[11px] font-bold text-[#c5def1]">
-                  Confirm New *
-                </label>
-                <input
-                  type="password"
-                  value={confirmPassInput}
-                  onChange={(e) => setConfirmPassInput(e.target.value)}
-                  placeholder="Confirm password"
-                  className="w-full rounded-lg border border-white/20 bg-white/10 px-2.5 py-1.5 text-xs text-white placeholder-white/40 focus:border-[#ffd45a] focus:outline-none"
-                />
-              </div>
-
-              <div className="sm:col-span-3 flex justify-end gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setIsChangingPassword(false)}
-                  className="rounded-lg border border-white/25 px-3 py-1 text-xs font-bold text-white hover:bg-white/10"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="btn-gold !px-4 !py-1 !text-xs font-black cursor-pointer"
-                >
-                  Save New Password
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
 
         {/* Lock Screen View */}
         {!isUnlocked ? (
@@ -673,33 +566,33 @@ export function SavedLeadsDrawer({
         ) : (
           <>
             {/* Unlocked Navigation Tabs */}
-            <div className="flex border-b border-[#c3d8e6] bg-[#062847] px-6 text-sm">
+            <div className="flex border-b border-[#c3d8e6] bg-[#062847] px-2 sm:px-6 text-xs sm:text-sm">
               <button
                 type="button"
                 onClick={() => setActiveTab("schedule")}
-                className={`relative flex items-center gap-2 px-4 py-3 font-extrabold transition-colors ${
+                className={`relative flex flex-1 sm:flex-initial items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 sm:py-3 font-extrabold transition-colors ${
                   activeTab === "schedule"
                     ? "border-b-2 border-[#ffd45a] text-[#ffd45a]"
                     : "text-[#c5def1] hover:text-white"
                 }`}
               >
-                <span>🗓️ Custom Trip Dates (Front Highlight)</span>
+                <span>🗓️ <span className="hidden sm:inline">Custom Trip Dates (Front Highlight)</span><span className="sm:hidden">Trip Dates</span></span>
                 {batchIsActive && (
-                  <span className="flex h-2 w-2 rounded-full bg-[#22c55e]"></span>
+                  <span className="flex h-2 w-2 rounded-full bg-[#22c55e] shrink-0"></span>
                 )}
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab("leads")}
-                className={`flex items-center gap-2 px-4 py-3 font-extrabold transition-colors ${
+                className={`flex flex-1 sm:flex-initial items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 sm:py-3 font-extrabold transition-colors ${
                   activeTab === "leads"
                     ? "border-b-2 border-[#ffd45a] text-[#ffd45a]"
                     : "text-[#c5def1] hover:text-white"
                 }`}
               >
                 <span>Customer Leads</span>
-                <span className="rounded-full bg-white/20 px-2 py-0.5 text-xs text-white">
+                <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] sm:text-xs text-white">
                   {leads.length}
                 </span>
               </button>
@@ -707,7 +600,7 @@ export function SavedLeadsDrawer({
 
             {/* TAB 1: CUSTOM START & END DATES SCHEDULE MANAGER */}
             {activeTab === "schedule" && (
-              <div className="flex-1 overflow-y-auto p-6 space-y-5">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5">
                 {/* Intro Card */}
                 <div className="rounded-2xl border-2 border-[#ffd45a] bg-gradient-to-br from-[#062847] to-[#0c406e] p-5 text-white shadow-md">
                   <div className="mb-2 flex items-center gap-2">
@@ -929,7 +822,7 @@ export function SavedLeadsDrawer({
             {activeTab === "leads" && (
               <>
                 {/* Search, Filter & Toolbar Bar */}
-                <div className="border-b border-[#d7e8f4] bg-white px-6 py-3.5 space-y-2.5">
+                <div className="border-b border-[#d7e8f4] bg-white px-3 sm:px-6 py-3 sm:py-3.5 space-y-2.5">
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
@@ -974,7 +867,7 @@ export function SavedLeadsDrawer({
                   </div>
 
                   {/* Status Tabs */}
-                  <div className="flex items-center gap-2 text-xs">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs">
                     <button
                       type="button"
                       onClick={() => setStatusFilter("ALL")}
@@ -1006,7 +899,7 @@ export function SavedLeadsDrawer({
                 </div>
 
                 {/* Leads List */}
-                <div className="flex-1 space-y-4 overflow-y-auto p-6">
+                <div className="flex-1 space-y-3 sm:space-y-4 overflow-y-auto p-3.5 sm:p-6">
                   {filteredLeads.length === 0 ? (
                     <div className="rounded-2xl border border-[#e1eef6] bg-white p-8 text-center">
                       <p className="mb-1 text-base font-bold text-[#062847]">
@@ -1149,10 +1042,10 @@ export function SavedLeadsDrawer({
                           </div>
 
                           {/* Quick Communication Actions */}
-                          <div className="mb-2 flex items-center gap-2">
+                          <div className="mb-2 flex flex-wrap items-center gap-2">
                             <a
                               href={`tel:${lead.phone}`}
-                              className="flex items-center gap-1.5 rounded-lg border border-[#c3d8e6] bg-[#f4f9fc] px-3 py-1.5 text-xs font-black text-[#062847] no-underline hover:bg-[#e4f1fa]"
+                              className="flex flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-lg border border-[#c3d8e6] bg-[#f4f9fc] px-3 py-1.5 text-xs font-black text-[#062847] no-underline hover:bg-[#e4f1fa]"
                             >
                               📞 Call ({lead.phone})
                             </a>
@@ -1160,7 +1053,7 @@ export function SavedLeadsDrawer({
                               href={waFollowupUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-1.5 rounded-lg bg-[#25d366] px-3 py-1.5 text-xs font-black text-[#072814] no-underline hover:bg-[#20bd5a]"
+                              className="flex flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-lg bg-[#25d366] px-3 py-1.5 text-xs font-black text-[#072814] no-underline hover:bg-[#20bd5a]"
                             >
                               💬 WhatsApp Customer
                             </a>
